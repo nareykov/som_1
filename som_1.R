@@ -41,17 +41,19 @@ NBA.measures2 <- c("FTA", "FT", "2PA", "2P", "3PA", "3P", "AST", "ORB", "DRB",
 
 training_indices <- sample(nrow(NBA), 200)
 NBA.training <- scale(NBA[training_indices, NBA.measures2])
-NBA.testing <- scale(NBA[-training_indices, NBA.measures2], center = attr(NBA.training, 
-                                                                          "scaled:center"), scale = attr(NBA.training, "scaled:scale"))
+NBA.testing <- scale(NBA[-training_indices, NBA.measures2], 
+                     center = attr(NBA.training,
+                                   "scaled:center"),
+                     scale = attr(NBA.training, "scaled:scale"))
 
 NBA.SOM3 <- xyf(NBA.training, classvec2classmat(NBA$Pos[training_indices]), 
-                grid = somgrid(13, 13, "hexagonal", toroidal = TRUE), rlen = 100, xweight = 0.5)
+                grid = somgrid(13, 13, "hexagonal", toroidal = TRUE), rlen = 100, user.weight = 0.5)
 
 pos.prediction <- predict(NBA.SOM3, newdata = NBA.testing)
 table(NBA[-training_indices, "Pos"], pos.prediction$prediction)
 
 NBA.SOM4 <- xyf(scale(NBA[, NBA.measures2]), classvec2classmat(NBA[, "Pos"]), 
-                grid = somgrid(13, 13, "hexagonal", toroidal = TRUE), rlen = 300, xweight = 0.7)
+                grid = somgrid(13, 13, "hexagonal", toroidal = TRUE), rlen = 300, user.weight = 0.7)
 
 par(mfrow = c(1, 2))
 plot(NBA.SOM4, type = "codes", main = c("Codes X", "Codes Y"))
